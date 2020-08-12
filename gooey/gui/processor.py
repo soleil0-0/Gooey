@@ -72,7 +72,7 @@ class ProcessController(object):
             pub.send_message(events.PROGRESS_UPDATE, progress=_progress)
             if _progress is None or self.hide_progress_msg is False:
                 pub.send_message(events.CONSOLE_UPDATE,
-                                 msg=line.decode(self.encoding))
+                                 msg=line.decode(self.encoding, 'replace'))
         pub.send_message(events.EXECUTION_COMPLETE)
 
     def _extract_progress(self, text):
@@ -81,7 +81,7 @@ class ProcessController(object):
         user-supplied regex and calculation instructions
         '''
         # monad-ish dispatch to avoid the if/else soup
-        find = partial(re.search, string=text.strip().decode(self.encoding))
+        find = partial(re.search, string=text.strip().decode(self.encoding, 'replace'))
         regex = unit(self.progress_regex)
         match = bind(regex, find)
         result = bind(match, self._calculate_progress)
